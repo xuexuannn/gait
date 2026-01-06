@@ -1,107 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Mini CRM + Chatbot</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales CRM - Lead Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <h1>Mini CRM</h1>
-    <div class="actions">
-      <button id="addCustomerBtn">Add customer</button>
-      <input id="searchInput" type="text" placeholder="Search name, company, email, phone…" />
-      <select id="statusFilter">
-        <option value="">All statuses</option>
-        <option>New</option>
-        <option>Contacted</option>
-        <option>Follow-up</option>
-        <option>Won</option>
-        <option>Lost</option>
-      </select>
-      <button id="dueTodayBtn">Follow-ups due today</button>
-      <button id="overdueBtn">Overdue</button>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>📊 Sales CRM</h1>
+                <div class="header-stats">
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalLeads">0</span>
+                        <span class="stat-label">Total Leads</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="dueToday">0</span>
+                        <span class="stat-label">Due Today</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Add Customer Form -->
+        <section class="form-section">
+            <h2>➕ Add New Customer</h2>
+            <form id="customerForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="customerName">Customer Name *</label>
+                        <input type="text" id="customerName" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company *</label>
+                        <input type="text" id="company" required placeholder="Acme Corp">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" placeholder="+1 (555) 123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" required placeholder="john@acme.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="stage">Stage</label>
+                        <input type="text" id="stage" placeholder="Discovery">
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status *</label>
+                        <select id="status" required>
+                            <option value="New">🆕 New</option>
+                            <option value="Contacted">📞 Contacted</option>
+                            <option value="Follow-up">🔄 Follow-up</option>
+                            <option value="Won">✅ Won</option>
+                            <option value="Lost">❌ Lost</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="followUpDate">Follow-up Date</label>
+                        <input type="date" id="followUpDate">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" rows="3" placeholder="Add your notes here..."></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Customer</button>
+            </form>
+        </section>
+
+        <!-- Search & Filter -->
+        <section class="filter-section">
+            <h2>🔍 Search & Filter</h2>
+            <div class="filter-controls">
+                <input type="text" id="searchInput" placeholder="Search by name, company, or email..." class="search-input">
+                <select id="statusFilter" class="filter-select">
+                    <option value="">All Statuses</option>
+                    <option value="New">🆕 New</option>
+                    <option value="Contacted">📞 Contacted</option>
+                    <option value="Follow-up">🔄 Follow-up</option>
+                    <option value="Won">✅ Won</option>
+                    <option value="Lost">❌ Lost</option>
+                </select>
+                <button id="dueTodayBtn" class="btn btn-secondary">📅 Due Today</button>
+                <button id="clearFiltersBtn" class="btn btn-outline">Clear Filters</button>
+            </div>
+        </section>
+
+        <!-- Customer List -->
+        <section class="list-section">
+            <h2>👥 Customer List</h2>
+            <div id="customerList" class="customer-grid"></div>
+            <div id="emptyState" class="empty-state">
+                <p>No customers found. Add your first customer above! 👆</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Chatbot -->
+    <button id="chatbotToggle" class="chatbot-toggle">💬</button>
+    <div id="chatbotContainer" class="chatbot-container hidden">
+        <div class="chatbot-header">
+            <h3>🤖 CRM Assistant</h3>
+            <button id="chatbotClose" class="chatbot-close">✕</button>
+        </div>
+        <div id="chatbotMessages" class="chatbot-messages"></div>
+        <div class="chatbot-input-container">
+            <input type="text" id="chatbotInput" placeholder="Ask me anything..." class="chatbot-input">
+            <button id="chatbotSend" class="chatbot-send">Send</button>
+        </div>
+        <div class="chatbot-suggestions">
+            <button class="suggestion-btn" data-question="How do I add a customer?">Add Customer</button>
+            <button class="suggestion-btn" data-question="How do I filter by status?">Filter Leads</button>
+            <button class="suggestion-btn" data-question="What are the customer stages?">Stages Info</button>
+        </div>
     </div>
-  </header>
 
-  <main>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Company</th>
-          <th>Phone/Email</th>
-          <th>Stage</th>
-          <th>Follow-up date</th>
-          <th>Status</th>
-          <th>Notes</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="customerTableBody"></tbody>
-    </table>
-  </main>
-
-  <!-- Modal for add/edit -->
-  <dialog id="customerDialog">
-    <form method="dialog" id="customerForm">
-      <h3 id="dialogTitle">Add customer</h3>
-      <input type="hidden" id="customerId" />
-      <label>Name <input id="name" required /></label>
-      <label>Company <input id="company" /></label>
-      <label>Phone/Email <input id="contact" /></label>
-      <label>Stage
-        <select id="stage">
-          <option>Discovery</option>
-          <option>Demo</option>
-          <option>Proposal</option>
-          <option>Negotiation</option>
-        </select>
-      </label>
-      <label>Follow-up date <input type="date" id="followDate" /></label>
-      <label>Status
-        <select id="status">
-          <option>New</option>
-          <option>Contacted</option>
-          <option>Follow-up</option>
-          <option>Won</option>
-          <option>Lost</option>
-        </select>
-      </label>
-      <label>Notes
-        <textarea id="notes" rows="4" placeholder="Add context, next steps, outcomes…"></textarea>
-      </label>
-      <menu>
-        <button value="cancel">Cancel</button>
-        <button id="saveBtn" value="default">Save</button>
-      </menu>
-    </form>
-  </dialog>
-
-  <!-- Chatbot -->
-  <section id="chatbot">
-    <h2>Assistant</h2>
-    <div id="chatWindow"></div>
-    <div id="chatControls">
-      <input id="chatInput" type="text" placeholder="Ask about follow-ups, craft emails, or summarize notes…" />
-      <button id="sendBtn">Send</button>
-      <label class="small">
-        Mode:
-        <select id="chatMode">
-          <option value="rule">Rule-based</option>
-          <option value="llm">LLM (API)</option>
-        </select>
-      </label>
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Edit Customer</h2>
+                <button class="modal-close" onclick="closeEditModal()">✕</button>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="editName">Customer Name *</label>
+                        <input type="text" id="editName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCompany">Company *</label>
+                        <input type="text" id="editCompany" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Phone</label>
+                        <input type="tel" id="editPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email *</label>
+                        <input type="email" id="editEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStage">Stage</label>
+                        <input type="text" id="editStage">
+                    </div>
+                    <div class="form-group">
+                        <label for="editStatus">Status *</label>
+                        <select id="editStatus" required>
+                            <option value="New">🆕 New</option>
+                            <option value="Contacted">📞 Contacted</option>
+                            <option value="Follow-up">🔄 Follow-up</option>
+                            <option value="Won">✅ Won</option>
+                            <option value="Lost">❌ Lost</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editFollowUpDate">Follow-up Date</label>
+                        <input type="date" id="editFollowUpDate">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="editNotes">Notes</label>
+                        <textarea id="editNotes" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
-  </section>
 
-  <footer>
-    <small>Data stored in your browser. Export regularly.</small>
-    <button id="exportBtn">Export JSON</button>
-    <input type="file" id="importFile" />
-  </footer>
-
-  <script src="app.js"></script>
+    <script src="chatbot.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

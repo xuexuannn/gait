@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mini CRM + Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Mini CRM</h1>
+    <div class="actions">
+      <button id="addCustomerBtn">Add customer</button>
+      <input id="searchInput" type="text" placeholder="Search name, company, email, phone…" />
+      <select id="statusFilter">
+        <option value="">All statuses</option>
+        <option>New</option>
+        <option>Contacted</option>
+        <option>Follow-up</option>
+        <option>Won</option>
+        <option>Lost</option>
+      </select>
+      <button id="dueTodayBtn">Follow-ups due today</button>
+      <button id="overdueBtn">Overdue</button>
+    </div>
+  </header>
+
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Company</th>
+          <th>Phone/Email</th>
+          <th>Stage</th>
+          <th>Follow-up date</th>
+          <th>Status</th>
+          <th>Notes</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="customerTableBody"></tbody>
+    </table>
+  </main>
+
+  <!-- Modal for add/edit -->
+  <dialog id="customerDialog">
+    <form method="dialog" id="customerForm">
+      <h3 id="dialogTitle">Add customer</h3>
+      <input type="hidden" id="customerId" />
+      <label>Name <input id="name" required /></label>
+      <label>Company <input id="company" /></label>
+      <label>Phone/Email <input id="contact" /></label>
+      <label>Stage
+        <select id="stage">
+          <option>Discovery</option>
+          <option>Demo</option>
+          <option>Proposal</option>
+          <option>Negotiation</option>
+        </select>
+      </label>
+      <label>Follow-up date <input type="date" id="followDate" /></label>
+      <label>Status
+        <select id="status">
+          <option>New</option>
+          <option>Contacted</option>
+          <option>Follow-up</option>
+          <option>Won</option>
+          <option>Lost</option>
+        </select>
+      </label>
+      <label>Notes
+        <textarea id="notes" rows="4" placeholder="Add context, next steps, outcomes…"></textarea>
+      </label>
+      <menu>
+        <button value="cancel">Cancel</button>
+        <button id="saveBtn" value="default">Save</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <!-- Chatbot -->
+  <section id="chatbot">
+    <h2>Assistant</h2>
+    <div id="chatWindow"></div>
+    <div id="chatControls">
+      <input id="chatInput" type="text" placeholder="Ask about follow-ups, craft emails, or summarize notes…" />
+      <button id="sendBtn">Send</button>
+      <label class="small">
+        Mode:
+        <select id="chatMode">
+          <option value="rule">Rule-based</option>
+          <option value="llm">LLM (API)</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <footer>
+    <small>Data stored in your browser. Export regularly.</small>
+    <button id="exportBtn">Export JSON</button>
+    <input type="file" id="importFile" />
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
